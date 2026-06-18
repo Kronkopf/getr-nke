@@ -144,15 +144,16 @@ with col_btn:
             del st.session_state["vorschlaege"]
         st.rerun()
 
-karten_bereich = st.empty()
-
 if "vorschlaege" not in st.session_state:
-    with karten_bereich:
-        with st.spinner("🤵 Barkeeper schaut in den Keller..."):
-            st.session_state["vorschlaege"] = hole_vorschlaege(daten)
-    st.rerun()
+    with st.spinner("🤵 Barkeeper schaut in den Keller..."):
+        ergebnis = hole_vorschlaege(daten)
+        if ergebnis and not ergebnis.startswith("❌"):
+            st.session_state["vorschlaege"] = ergebnis
+        else:
+            st.error(f"Fehler: {ergebnis}")
 
-karten_bereich.markdown(st.session_state["vorschlaege"])
+if "vorschlaege" in st.session_state:
+    st.markdown(st.session_state["vorschlaege"])
 
 st.divider()
 
