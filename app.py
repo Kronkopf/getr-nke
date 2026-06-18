@@ -140,19 +140,19 @@ st.header("🍹 Getränkekarte für Gäste")
 col_txt, col_btn = st.columns([5, 1])
 with col_btn:
     if st.button("🔄 Neu generieren", use_container_width=True):
-        with st.spinner("🤵 Einen Moment..."):
-            st.session_state["vorschlaege"] = hole_vorschlaege(daten)
+        if "vorschlaege" in st.session_state:
+            del st.session_state["vorschlaege"]
+        st.rerun()
+
+karten_bereich = st.empty()
 
 if "vorschlaege" not in st.session_state:
-    placeholder = st.empty()
-    with placeholder.container():
+    with karten_bereich:
         with st.spinner("🤵 Barkeeper schaut in den Keller..."):
-            result = hole_vorschlaege(daten)
-            st.session_state["vorschlaege"] = result
-    placeholder.empty()
+            st.session_state["vorschlaege"] = hole_vorschlaege(daten)
+    st.rerun()
 
-if st.session_state.get("vorschlaege"):
-    st.markdown(st.session_state["vorschlaege"])
+karten_bereich.markdown(st.session_state["vorschlaege"])
 
 st.divider()
 
