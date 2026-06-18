@@ -87,7 +87,7 @@ Erstelle genau 15 Getränkevorschläge. Format:
 - Mischgetränke und Cocktails: Emoji **Name** — Zutaten mit cl
 
 Reihenfolge:
-1. Basics zuerst: Bier, Wein, Sekt, Wasser still, Wasser sprudelnd, Saft, Espresso, Kaffee, Cappuccino etc.
+1. Basics zuerst: genau den Namen aus dem Bestand verwenden (z.B. "Paulaner Weizen" nicht nur "Bier", "Grüner Veltliner" nicht nur "Weißwein") — Wasser still, Wasser sprudelnd, Espresso, Kaffee, Cappuccino etc. immer dabei
 2. Einfache Klassiker: Aperol Spritz, Hugo, Weinschorle, Radler etc.
 3. Ganz am Ende 2-3 kreativere Cocktails/Kombis mit cl-Angaben
 
@@ -137,17 +137,22 @@ daten = lade_daten()
 # ── 🍹 Getränkekarte für Gäste (automatisch beim Laden) ───────────────────────
 st.header("🍹 Getränkekarte für Gäste")
 
-if "vorschlaege" not in st.session_state:
-    with st.spinner("🤵 Barkeeper schaut in den Keller..."):
-        st.session_state["vorschlaege"] = hole_vorschlaege(daten)
-
 col_txt, col_btn = st.columns([5, 1])
 with col_btn:
     if st.button("🔄 Neu generieren", use_container_width=True):
         with st.spinner("🤵 Einen Moment..."):
             st.session_state["vorschlaege"] = hole_vorschlaege(daten)
 
-st.markdown(st.session_state["vorschlaege"])
+if "vorschlaege" not in st.session_state:
+    placeholder = st.empty()
+    with placeholder.container():
+        with st.spinner("🤵 Barkeeper schaut in den Keller..."):
+            result = hole_vorschlaege(daten)
+            st.session_state["vorschlaege"] = result
+    placeholder.empty()
+
+if st.session_state.get("vorschlaege"):
+    st.markdown(st.session_state["vorschlaege"])
 
 st.divider()
 
